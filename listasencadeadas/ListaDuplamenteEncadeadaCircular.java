@@ -4,6 +4,7 @@ public class ListaDuplamenteEncadeadaCircular <Type> {
     
     private ListNode head;
     private ListNode tail;
+    private ListNode node;
     private int size;
     
     private class ListNode{
@@ -37,11 +38,14 @@ public class ListaDuplamenteEncadeadaCircular <Type> {
     }
     
     public void add(Type elem){
-        ListNode newElement = new ListNode(elem, head, head);
+        ListNode newElement = new ListNode(elem, null, null);
         if(head == null){
             head = newElement;
+            head.next = head.next = head;
+            newElement = head;
         } else {
             newElement.previous = tail;
+            newElement.next = head;
             tail.next = newElement;
         }
         tail = newElement;
@@ -75,8 +79,8 @@ public class ListaDuplamenteEncadeadaCircular <Type> {
         if (index < 0 || index >= size) {
             return;
         } else {
-            ListNode set = findPrevious(index);
-            set.element = elem;
+            findNode(index);
+            node.element = elem;
         }
     }
     
@@ -95,10 +99,13 @@ public class ListaDuplamenteEncadeadaCircular <Type> {
                 if(index == size - 1){
                     tail = tail.previous;
                     tail.next = head;
+                    head.previous = tail;
                 } else {
-                    ListNode delete = findPrevious(index);
-                    delete.next = delete.next.next;
-                    delete.next.previous = delete;
+                    findNode(index);
+                    System.out.println("\n asdas "+node.element);
+                    node.previous.next = node.next.next;
+                    node.next.previous = node.previous;
+                    
                 }
             }
             size--;
@@ -110,16 +117,42 @@ public class ListaDuplamenteEncadeadaCircular <Type> {
         if(index < 0 || index > size){
             return;
         } else {
-            
+            if(index == 0){
+                ListNode newElement = new ListNode(elem, tail, null);
+                if(head == null){
+                    head = newElement;
+                    head.previous = head.next = head;
+                    newElement = head;
+                    tail = newElement;
+                } else {
+                    newElement.next = head;
+                    head.previous = newElement;
+                    head = newElement;
+                }
+            } else {
+                if(index == size){
+                    ListNode newElement = new ListNode(elem, tail, head);
+                    tail.next = newElement;
+                    tail = newElement;
+                } else {
+                    findNode(index);
+//                    System.out.println("\n"+index+" "+node.previous.element);
+                    ListNode newElement = new ListNode(elem, node.previous, node);
+                    node.previous.next = newElement;
+                }
+            }
+            size++;
         }
     }
     
-    private ListNode findPrevious(int index){
-        ListNode search = tail;
+    private void findNode(int index){
+        ListNode search = head;
+//        System.out.println("\n asfas"+head.element);
         for (int i = 0; i < index; i++) {
             search = search.next;
+//            System.out.println("\n  "+search.element+"\n");
         }
-        return search;
+        node = search;
     }
     
     public void printList(){
